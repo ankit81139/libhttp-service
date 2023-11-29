@@ -1,0 +1,18 @@
+# ninja log v5
+6	4416	7229586987440429	obj/winService/libhttpserver.basic_auth_fail_response.o	6b243a49b080dbd3
+26	4446	7229586987950426	obj/winService/libhttpserver.file_info.o	775d73d4fe9e871a
+10	4460	7229586988000416	obj/winService/libhttpserver.deferred_response.o	e3b36da2bcf46a36
+21	5592	7229586999140413	obj/winService/libhttpserver.digest_auth_fail_response.o	1a0c3d609404b79f
+48	5849	7229587001810425	obj/winService/libhttpserver.http_response.o	e5c8be1174084f48
+33	6024	7229587003770415	obj/winService/libhttpserver.file_response.o	277136b54d17b307
+40	6132	7229587004690405	obj/winService/libhttpserver.http_request.o	dc2b457954646f5f
+72	6133	7229587004640431	obj/winService/libhttpserver.http_utils.o	82c2a6dfde7a32cf
+65	6278	7229587006450445	obj/winService/libhttpserver.http_resource.o	10b555d9247e4bf
+5850	8280	7229587026500404	obj/winService/winService.service_controller.o	944e815bf875a8b0
+4460	8725	7229587030950454	obj/winService/libhttpserver.string_response.o	ed5c07a0223130a2
+1	8800	7229587031610398	obj/winService/details/libhttpserver.http_endpoint.o	eb43df2cc32fc4f9
+4447	8860	7229587032300782	obj/winService/libhttpserver.string_utilities.o	780dd46dcaade69
+5593	9528	7229587038990801	obj/winService/winService.server.o	afa778ce1f551a5f
+4429	9875	7229587042420799	obj/winService/libhttpserver.webserver.o	4435c971836d8c72
+9875	10176	7229587045377113	libhttpserver.so	37d1ac73cd7052c6
+10176	10428	0	winService	d2af0cb91ff99e75

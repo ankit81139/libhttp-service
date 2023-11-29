@@ -1,0 +1,32 @@
+ninja_required_version = 1.7.2
+
+rule gn
+  command = ../buildtools/win/gn.exe --root=./.. -q --regeneration gen .
+  pool = console
+  description = Regenerating ninja files
+
+# The 'gn' rule also writes build.ninja, unbeknownst to ninja. The
+# build.ninja edge is separate to prevent ninja from deleting it
+# (due to depfile usage) if interrupted. gn uses atomic writes to
+# ensure that build.ninja is always valid even if interrupted.
+build build.ninja.stamp: gn
+  generator = 1
+  depfile = build.ninja.d
+
+build build.ninja: phony build.ninja.stamp
+  generator = 1
+
+subninja toolchain.ninja
+
+build http: phony obj/http.stamp
+build libhttpserver: phony ./libhttpserver.so
+build $:http: phony obj/http.stamp
+build winService$:libhttpserver: phony ./libhttpserver.so
+build winService$:winService: phony winService
+
+build all: phony $
+    obj/http.stamp $
+    ./libhttpserver.so $
+    winService
+
+default all

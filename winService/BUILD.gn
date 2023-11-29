@@ -1,0 +1,56 @@
+executable("winService"){
+  sources = [
+    "kuzu.h",
+    "server.cpp",
+    "service_controller.cpp",
+    "httpserver.hpp"
+  ]
+  deps = [
+    ":libhttpserver"
+  ]
+  libs = [
+    "//winService/kuzu_shared.lib",
+    "ws2_32", "advapi32"
+  ]
+  ldflags = [ "-static-libgcc", "-static-libstdc++" ]
+}
+
+shared_library("libhttpserver") {
+  # Add the source files
+  sources = [
+    "//winService/details/http_endpoint.cpp",
+    "//winService/httpserver/http_endpoint.hpp",
+    "//winService/httpserver/modded_request.hpp",
+    "//winService/httpserver/basic_auth_fail_response.hpp",
+    "//winService/httpserver/create_webserver.hpp",
+    "//winService/basic_auth_fail_response.cpp",
+    "//winService/deferred_response.cpp",
+    "//winService/digest_auth_fail_response.cpp",
+    "//winService/file_info.cpp",
+    "//winService/file_response.cpp",
+    "//winService/gettext.h",
+    "//winService/http_request.cpp",
+    "//winService/http_response.cpp",
+    "//winService/http_resource.cpp",
+    "//winService/http_utils.cpp",
+    "//winService/httpserver.hpp",
+    "//winService/webserver.cpp",
+    "//winService/string_utilities.cpp",
+    "//winService/string_response.cpp",
+  ]
+  libs = [
+    "libmicrohttpd",
+    "ws2_32"
+  ]
+  # Include directories
+  include_dirs = [
+    "//winService/",
+    "//winService/details/",
+    "//winService/httpserver/details/",
+    "//winService/httpserver/",
+    "C:/msys64/mingw64/lib",
+    "C:/msys64/mingw64/include"
+  ]
+
+  ldflags = [ "-lmicrohttpd", "-lws2_32" ]
+}

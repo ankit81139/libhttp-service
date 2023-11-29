@@ -1,0 +1,54 @@
+defines =
+include_dirs = -I../winService -I../winService/details -I../winService/httpserver/details -I../winService/httpserver -IC$:/msys64/mingw64/lib -IC$:/msys64/mingw64/include
+cflags =
+cflags_cc =
+target_out_dir = obj/winService
+target_output_name = libhttpserver
+
+build obj/winService/details/libhttpserver.http_endpoint.o: cxx ../winService/details/http_endpoint.cpp
+  source_file_part = http_endpoint.cpp
+  source_name_part = http_endpoint
+build obj/winService/libhttpserver.basic_auth_fail_response.o: cxx ../winService/basic_auth_fail_response.cpp
+  source_file_part = basic_auth_fail_response.cpp
+  source_name_part = basic_auth_fail_response
+build obj/winService/libhttpserver.deferred_response.o: cxx ../winService/deferred_response.cpp
+  source_file_part = deferred_response.cpp
+  source_name_part = deferred_response
+build obj/winService/libhttpserver.digest_auth_fail_response.o: cxx ../winService/digest_auth_fail_response.cpp
+  source_file_part = digest_auth_fail_response.cpp
+  source_name_part = digest_auth_fail_response
+build obj/winService/libhttpserver.file_info.o: cxx ../winService/file_info.cpp
+  source_file_part = file_info.cpp
+  source_name_part = file_info
+build obj/winService/libhttpserver.file_response.o: cxx ../winService/file_response.cpp
+  source_file_part = file_response.cpp
+  source_name_part = file_response
+build obj/winService/libhttpserver.http_request.o: cxx ../winService/http_request.cpp
+  source_file_part = http_request.cpp
+  source_name_part = http_request
+build obj/winService/libhttpserver.http_response.o: cxx ../winService/http_response.cpp
+  source_file_part = http_response.cpp
+  source_name_part = http_response
+build obj/winService/libhttpserver.http_resource.o: cxx ../winService/http_resource.cpp
+  source_file_part = http_resource.cpp
+  source_name_part = http_resource
+build obj/winService/libhttpserver.http_utils.o: cxx ../winService/http_utils.cpp
+  source_file_part = http_utils.cpp
+  source_name_part = http_utils
+build obj/winService/libhttpserver.webserver.o: cxx ../winService/webserver.cpp
+  source_file_part = webserver.cpp
+  source_name_part = webserver
+build obj/winService/libhttpserver.string_utilities.o: cxx ../winService/string_utilities.cpp
+  source_file_part = string_utilities.cpp
+  source_name_part = string_utilities
+build obj/winService/libhttpserver.string_response.o: cxx ../winService/string_response.cpp
+  source_file_part = string_response.cpp
+  source_name_part = string_response
+
+build ./libhttpserver.so: solink obj/winService/details/libhttpserver.http_endpoint.o obj/winService/libhttpserver.basic_auth_fail_response.o obj/winService/libhttpserver.deferred_response.o obj/winService/libhttpserver.digest_auth_fail_response.o obj/winService/libhttpserver.file_info.o obj/winService/libhttpserver.file_response.o obj/winService/libhttpserver.http_request.o obj/winService/libhttpserver.http_response.o obj/winService/libhttpserver.http_resource.o obj/winService/libhttpserver.http_utils.o obj/winService/libhttpserver.webserver.o obj/winService/libhttpserver.string_utilities.o obj/winService/libhttpserver.string_response.o
+  ldflags = -lmicrohttpd -lws2_32
+  libs = -llibmicrohttpd -lws2_32
+  frameworks =
+  swiftmodules =
+  output_extension = .so
+  output_dir = .

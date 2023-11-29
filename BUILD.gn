@@ -1,0 +1,5 @@
+group("http") {
+  deps = [
+    "//winService",
+  ]
+}
