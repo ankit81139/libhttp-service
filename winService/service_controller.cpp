@@ -47,7 +47,7 @@ void winService::install(char *argv[])
     std::wstring wideArgv0(wideArgv0Size, L'\0');
     MultiByteToWideChar(CP_UTF8, 0, argv[0], -1, &wideArgv0[0], wideArgv0Size);
 
-    std::wstring serviceBinaryPath = L"" + wideArgv0;
+    std::wstring serviceBinaryPath = L"C:/src/libhttp-service/out/" + wideArgv0;
 
     scm = OpenSCManagerW(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
     if (!scm)

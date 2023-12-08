@@ -4,11 +4,13 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
-#include <C:\src\http-service\winService\service_controller.h>
-#include <C:\src\http-service\winService\kuzu.h>
+#include "service_controller.h"
+#include "kuzu.h"
+#include <sstream>
 
 
 using namespace std;
+using namespace httpserver;
 //.
 namespace
 {
@@ -27,13 +29,50 @@ class hello_world_resource : public httpserver::http_resource {
 // Using the render method you are able to catch each type of request you receive
 std::shared_ptr<httpserver::http_response> hello_world_resource::render(const httpserver::http_request& req) {
     // It is possible to store data inside the resource object that can be altered through the requests
+    
+    
     std::cout << "Data was: " << data << std::endl;
     std::string_view datapar = req.get_arg("data");
     set_some_data(datapar == "" ? "no data passed!!!" : std::string(datapar));
     std::cout << "Now data is:" << data << std::endl;
 
+
+    // http::arg_view_map map = req.get_args();
+    // auto it = map.begin();
+    // auto end = map.end();
+    // std::string os;
+    // if (map.size()) {
+    //     for (; it != end; ++it) {
+    //         // os += (*it).first;
+    //         if((*it).first == "query"){
+    //             kuzu_database* db = kuzu_database_init("C:\\kuzu-test", kuzu_default_system_config());
+    //             kuzu_connection* conn = kuzu_connection_init(db);
+    //             const char* query = (*it).second;
+    //             kuzu_query_result* result = kuzu_connection_query(conn, query);
+    //             os += "query_result : ";
+    //             while (kuzu_query_result_has_next(result)) {
+    //                 kuzu_flat_tuple* tuple = kuzu_query_result_get_next(result);
+    //                 kuzu_value* value = kuzu_flat_tuple_get_value(tuple, 0);
+    //                 char* name = kuzu_value_get_string(value);
+    //                 value = kuzu_flat_tuple_get_value(tuple, 1);
+    //                 int64_t age = kuzu_value_get_int64(value);
+    //                 kuzu_value_destroy(value);
+    //                 kuzu_flat_tuple_destroy(tuple);
+    //                 os += to_string(age);
+    //                 os += name;
+    //             }
+    //         }
+    //         // os += ":\" ";
+    //         // os += (*it).second;
+    //         // os += "\" ";
+    //     }
+    //     set_some_data(os);
+    // }
+    // else{
+    //     cout << "No data is passed";
+    // }
     // It is possible to send a response initializing an http_string_response that reads the content to send in response from a string.
-    return std::shared_ptr<httpserver::http_response>(new httpserver::string_response("Hello World!!!", 200));
+    return std::shared_ptr<httpserver::http_response>(new httpserver::string_response("Hello World!!! " + data, 200));
 }
 
 SERVICE_STATUS        ServiceStatus;
@@ -144,8 +183,7 @@ void ReportStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint)
     SetServiceStatus(g_StatusHandle, &g_ServiceStatus);
 }
 
-void kuzu()
-{
+void kuzu() {
     ofstream logFile("C:\\log2.txt", ios::app);
     logFile << " service started" << endl;
     kuzu_database* db = kuzu_database_init("C:\\kuzu-test", kuzu_default_system_config());
