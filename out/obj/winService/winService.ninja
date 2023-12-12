@@ -11,8 +11,11 @@ build obj/winService/winService.server.o: cxx ../winService/server.cpp
 build obj/winService/winService.service_controller.o: cxx ../winService/service_controller.cpp
   source_file_part = service_controller.cpp
   source_name_part = service_controller
+build obj/winService/winService.rest.o: cxx ../winService/rest.cpp
+  source_file_part = rest.cpp
+  source_name_part = rest
 
-build winService: link obj/winService/winService.server.o obj/winService/winService.service_controller.o ./libhttpserver.so | ../winService/kuzu_shared.lib
+build winService: link obj/winService/winService.server.o obj/winService/winService.service_controller.o obj/winService/winService.rest.o ./libhttpserver.so | ../winService/kuzu_shared.lib
   ldflags = -static-libgcc -static-libstdc++ -Wl,-rpath=$$ORIGIN/ -Wl,-rpath-link=
   libs = ../winService/kuzu_shared.lib -lws2_32 -ladvapi32
   frameworks =

@@ -7,10 +7,12 @@
 #include "service_controller.h"
 #include "kuzu.h"
 #include <sstream>
+#include "rest.hpp"
 
 
 using namespace std;
 using namespace httpserver;
+using namespace rest;
 //.
 namespace
 {
@@ -19,61 +21,69 @@ namespace
     SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
 }
 
-class hello_world_resource : public httpserver::http_resource {
- public:
-     std::shared_ptr<httpserver::http_response> render(const httpserver::http_request&);
-     void set_some_data(const std::string &s) {data = s;}
-     std::string data;
+// class hello_world_resource : public httpserver::http_resource {
+//  public:
+//      std::shared_ptr<httpserver::http_response> render(const httpserver::http_request&);
+//      void set_some_data(const std::string &s) {data = s;}
+//      std::string data;
+// };
+
+// // Using the render method you are able to catch each type of request you receive
+// std::shared_ptr<httpserver::http_response> hello_world_resource::render(const httpserver::http_request& req) {
+//     // It is possible to store data inside the resource object that can be altered through the requests
+    
+//     std::cout << "Data was: " << data << std::endl;
+//     std::string_view datapar = req.get_arg("data");
+//     set_some_data(datapar == "" ? "no data passed!!!" : std::string(datapar));
+//     std::cout << "Now data is:" << data << std::endl;
+   
+//     // It is possible to send a response initializing an http_string_response that reads the content to send in response from a string.
+//     return std::shared_ptr<httpserver::http_response>(new httpserver::string_response("Hello World!!! " + data, 200));
+// }
+
+
+
+class hello_world_resource : public http_resource {
+    public:
+        hello_world_resource(){
+            this->API = new restAPI();
+        }
+        std::shared_ptr<http_response> render(const http_request& req) {
+            std::string data = "";
+            if(req.get_method() == "GET") {
+                data = this->API->get();
+            }
+            if(req.get_method() == "PUT"){
+                this->API->put(req);
+            }
+            if(req.get_method() == "DELETE"){
+                this->API->remove(req);
+            }
+            if(req.get_method() == "POST"){
+                this->API->update(req);
+            }
+            return std::shared_ptr<http_response>(new string_response("Hello, World! " + data));
+        }
+    
+    private:
+        restAPI* API;
 };
 
-// Using the render method you are able to catch each type of request you receive
-std::shared_ptr<httpserver::http_response> hello_world_resource::render(const httpserver::http_request& req) {
-    // It is possible to store data inside the resource object that can be altered through the requests
-    
-    
-    std::cout << "Data was: " << data << std::endl;
-    std::string_view datapar = req.get_arg("data");
-    set_some_data(datapar == "" ? "no data passed!!!" : std::string(datapar));
-    std::cout << "Now data is:" << data << std::endl;
+class handling_multiple_resource : public http_resource {
+    public:
+        std::shared_ptr<http_response> render(const http_request& req) {
+            return std::shared_ptr<http_response>(new string_response("Your URL: " + std::string(req.get_path())));
+        }
+};
 
-
-    // http::arg_view_map map = req.get_args();
-    // auto it = map.begin();
-    // auto end = map.end();
-    // std::string os;
-    // if (map.size()) {
-    //     for (; it != end; ++it) {
-    //         // os += (*it).first;
-    //         if((*it).first == "query"){
-    //             kuzu_database* db = kuzu_database_init("C:\\kuzu-test", kuzu_default_system_config());
-    //             kuzu_connection* conn = kuzu_connection_init(db);
-    //             const char* query = (*it).second;
-    //             kuzu_query_result* result = kuzu_connection_query(conn, query);
-    //             os += "query_result : ";
-    //             while (kuzu_query_result_has_next(result)) {
-    //                 kuzu_flat_tuple* tuple = kuzu_query_result_get_next(result);
-    //                 kuzu_value* value = kuzu_flat_tuple_get_value(tuple, 0);
-    //                 char* name = kuzu_value_get_string(value);
-    //                 value = kuzu_flat_tuple_get_value(tuple, 1);
-    //                 int64_t age = kuzu_value_get_int64(value);
-    //                 kuzu_value_destroy(value);
-    //                 kuzu_flat_tuple_destroy(tuple);
-    //                 os += to_string(age);
-    //                 os += name;
-    //             }
-    //         }
-    //         // os += ":\" ";
-    //         // os += (*it).second;
-    //         // os += "\" ";
-    //     }
-    //     set_some_data(os);
-    // }
-    // else{
-    //     cout << "No data is passed";
-    // }
-    // It is possible to send a response initializing an http_string_response that reads the content to send in response from a string.
-    return std::shared_ptr<httpserver::http_response>(new httpserver::string_response("Hello World!!! " + data, 200));
-}
+class url_args_resource : public http_resource {
+    public:
+        std::shared_ptr<http_response> render(const http_request& req) {
+            std::string arg1(req.get_arg("arg1"));
+            std::string arg2(req.get_arg("arg2"));
+            return std::shared_ptr<http_response>(new string_response("ARGS: " + arg1 + " and " + arg2));
+        }
+};
 
 SERVICE_STATUS        ServiceStatus;
 SERVICE_STATUS_HANDLE hStatus;
@@ -155,19 +165,20 @@ void ControlHandler(DWORD request)
 
 void ServiceWorkerThread()
 {
-    kuzu();
+    // kuzu();
 
-    httpserver::webserver ws = httpserver::create_webserver(8080).start_method(httpserver::http::http_utils::INTERNAL_SELECT).max_threads(5);
-
+    webserver ws = create_webserver(8080);
     hello_world_resource hwr;
-    // This way we are registering the hello_world_resource to answer for the endpoint
-    // "/hello". The requested method is called (if the request is a GET we call the render_GET
-    // method. In case that the specific render method is not implemented, the generic "render"
-    // method is called.
-    ws.register_resource("/hello", &hwr, true);
+    ws.register_resource("/hello", &hwr);
 
-    // This way we are putting the created webserver in listen. We pass true in order to have
-    // a blocking call; if we want the call to be non-blocking we can just pass false to the method.
+    handling_multiple_resource hmr;
+    ws.register_resource("/family", &hmr, true);
+    ws.register_resource("/with_regex_[0-9]+", &hmr);
+
+    url_args_resource uar;
+    ws.register_resource("/url/with/{arg1}/and/{arg2}", &uar);
+    ws.register_resource("/url/with/parametric/args/{arg1|[0-9]+}/and/{arg2|[A-Z]+}", &uar);
+
     ws.start(true);
     ReportStatus(SERVICE_STOPPED, NO_ERROR, 0);
 }

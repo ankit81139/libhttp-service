@@ -3,7 +3,9 @@ executable("winService"){
     "kuzu.h",
     "server.cpp",
     "service_controller.cpp",
-    "httpserver.hpp"
+    "httpserver.hpp",
+    "rest.hpp",
+    "rest.cpp"
   ]
   deps = [
     ":libhttpserver"
